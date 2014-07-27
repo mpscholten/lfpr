@@ -1,0 +1,23 @@
+propel:
+    paths:
+        projectDir: ./config/
+        schemaDir: ./config/
+        phpDir: ./app/models/
+
+    database:
+        connections:
+            default:
+                adapter: mysql
+                classname: Propel\Runtime\Connection\DebugPDO
+                dsn: mysql:host=%env.LFPR_DB_HOST%;dbname=%env.LFPR_DB_NAME%
+                user: %env.LFPR_DB_USER%
+                password: %env.LFPR_DB_PASSWORD%
+
+    runtime:
+        defaultConnection: default
+
+    generator:
+        defaultConnection: default
+        connections:
+            - default
+

@@ -1,6 +1,8 @@
 <?php
 set_time_limit(0);
 
+require __DIR__ . '/../vendor/autoload.php';
+
 function __autoload_core($class) {
 	try {
 		$path = dirname(__FILE__)."/../core/" . $class . "Class.php";

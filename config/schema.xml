@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="default" defaultIdMethod="native">
+    <table name="developer">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255"/>
+        <column name="avatar_url" type="varchar" size="255"/>
+        <column name="github_url" type="varchar" size="255"/>
+
+        <behavior name="timestampable" />
+    </table>
+</database>
