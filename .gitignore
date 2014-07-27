@@ -2,3 +2,5 @@ config/database.yml
 config/config.yml
 tmp/logs.txt
 *~
+
+/vendor/

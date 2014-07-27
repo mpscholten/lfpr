@@ -1,0 +1,12 @@
+{
+    "name": "deleteman/lfpr",
+    "require": {
+				"propel/propel": "2.0.*@dev"
+    },
+    "authors": [
+        {
+            "name": "Fernando Doglio",
+            "email": "deleteman@gmail.com"
+        }
+    ]
+}
