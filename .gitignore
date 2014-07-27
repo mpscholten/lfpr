@@ -4,3 +4,5 @@ tmp/logs.txt
 *~
 
 /vendor/
+app/models/Base
+app/models/Map
