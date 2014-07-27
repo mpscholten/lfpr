@@ -1,10 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="default" defaultIdMethod="native">
+<database name="default" defaultIdMethod="native"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd" >
+    <behavior name="auto_add_pk" />
+
     <table name="developer">
-        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255"/>
         <column name="avatar_url" type="varchar" size="255"/>
         <column name="github_url" type="varchar" size="255"/>
+
+        <behavior name="timestampable" />
+    </table>
+
+    <table name="project">
+        <column name="name" type="varchar" size="255"/>
+        <column name="url" type="varchar" size="255"/>
+        <column name="description" type="longvarchar"/>
+        <column name="owner_id" type="integer" required="true"/>
+        <column name="stars" type="integer"/>
+        <column name="forks" type="integer"/>
+        <column name="last_update" type="timestamp"/>
+    </table>
+
+    <table name="project_commit">
+        <column name="project_id" type="integer" required="true"/>
+        <column name="committer" type="varchar" size="255"/>
+        <column name="commit_message" type="longvarchar"/>
+        <column name="sha" type="varchar" size="255"/>
+
+        <foreign-key foreignTable="project">
+            <reference local="project_id" foreign="id"/>
+        </foreign-key>
+    </table>
+
+    <table name="project_delta">
+        <column name="sample_date" type="timestamp"/>
+        <column name="stars" type="integer"/>
+        <column name="delta_stars" type="integer"/>
+        <column name="forks" type="integer"/>
+        <column name="delta_forks" type="integer"/>
+    </table>
+
+    <table name="suscriptor">
+        <column name="email" type="varchar" size="255"/>
+    </table>
+
+    <table name="user">
+        <column name="username" type="varchar" size="255"/>
+        <column name="password" type="varchar" size="255"/>
+        <column name="role" type="varchar" size="255"/>
+    </table>
+
+    <table name="web_site_message">
+        <column name="email" type="varchar" size="255"/>
+        <column name="body" type="longvarchar"/>
+    </table>
+
+    <table name="faq">
+        <column name="project_id" type="integer" required="true"/>
+        <column name="question" type="varchar" size="255"/>
+        <column name="answer" type="longvarchar"/>
+        <column name="order" type="integer"/>
+
+        <foreign-key foreignTable="project">
+            <reference local="project_id" foreign="id"/>
+        </foreign-key>
+
+        <behavior name="timestampable" />
+    </table>
+
+    <table name="issue">
+        <column name="project_id" type="integer" required="true"/>
+        <column name="title" type="varchar" size="255"/>
+        <column name="body" type="longvarchar"/>
+        <column name="num" type="integer"/>
+        <column name="url" type="varchar" size="255"/>
+
+        <foreign-key foreignTable="project">
+            <reference local="project_id" foreign="id"/>
+        </foreign-key>
 
         <behavior name="timestampable" />
     </table>
