@@ -20,6 +20,16 @@
         <column name="stars" type="integer"/>
         <column name="forks" type="integer"/>
         <column name="last_update" type="timestamp"/>
+        <column name="published" type="boolean"/>
+        <column name="language" type="varchar" size="255"/>
+        <column name="open_issues" type="integer"/>
+        <column name="closed_issues" type="integer"/>
+        <column name="readme" type="longvarchar"/>
+        <column name="pr_acceptance_rate" type="integer"/>
+
+        <foreign-key foreignTable="developer">
+            <reference local="owner_id" foreign="id"/>
+        </foreign-key>
     </table>
 
     <table name="project_commit">

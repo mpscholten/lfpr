@@ -1,6 +1,8 @@
 <?php
 
- class WebSiteMessageController extends ApplicationController {
+use Propel\Runtime\Exception\PropelException;
+
+class WebSiteMessageController extends ApplicationController {
 
   public function newAction() {
     $entity = new WebSiteMessage();
@@ -8,30 +10,30 @@
   }
 
   public function deleteAction() {
-    delete_web_site_message($this->request->getParam("id"));
+    WebSiteMessageQuery::create()->findOneById($this->request->getParam("id"))->delete();
     $this->flash->success("Delete successfull!");
     $this->redirect_to(web_site_message_list_path());
   }
 
   public function editAction() {
-    $tb = load_web_site_message($this->request->getParam("id"));
+    $webSiteMessage = WebSiteMessageQuery::create()->findOneById($this->request->getParam("id"));
 
-    $this->render(array("entity" => $tb));
+    $this->render(array("entity" => $webSiteMessage));
   }
 
   public function showAction() {
-    $id = $this->request->getParam("id");
-    $ent = load_web_site_message($id);
-    $this->render(array("entity" => $ent));
+    $webSiteMessage = WebSiteMessageQuery::create()->findOneById($this->request->getParam("id"))
+    $this->render(array("entity" => $webSiteMessage));
   }
 
   public function createAction() {
     $entity = new WebSiteMessage();
-    $entity->load_from_array($this->request->getParam("web_site_message"));
-    if(save_web_site_message($entity)) {
-      $this->flash->setSuccess("Message sent! Thanks for getting in touch!");
-      $this->redirect_to(home_root_path_path());
-    } else {
+    $entity->fromArray($this->request->getParam("web_site_message"));
+    try {
+        $entity->save();
+        $this->flash->setSuccess("Message sent! Thanks for getting in touch!");
+        $this->redirect_to(home_root_path_path());
+    } catch (PropelException $e) {
       $this->flash->setError("Both fields are required, make sure you fill them! And the email must be  valid one.");
       $this->redirect_to(home_root_path_path());
     }

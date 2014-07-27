@@ -1,6 +1,9 @@
 <?php
 
- class ProjectController extends ApplicationController {
+use Base\DeveloperQuery;
+use Base\ProjectQuery;
+
+class ProjectController extends ApplicationController {
   private $per_page = 12;
 
    public function searchAction() {
@@ -104,45 +107,43 @@
   }
 
   public function createAction() {
-    $entity = new Project();
+    $project = new Project();
     $proj = $this->request->getParam("project");
 
-    $dev = load_developer_where('name = "' . $this->request->getParam("owner_name").'"');
+    $dev = DeveloperQuery::create()->findOneByName($this->request->getParam("owner_name"));
 
     if($dev == null) { //Create the developer if it's not on our database already
       $dev = new Developer();
-      $dev->name = $this->request->getParam("owner_name");
-      $dev->avatar_url = $this->request->getParam("owner_avatar");
-      save_developer($dev);
+      $dev->setName($this->request->getParam("owner_name"));
+      $dev->setAvatarUrl($this->request->getParam("owner_avatar"));
+      $dev->save();
     } else { //Update the avatar if it changed
-      if ( $dev->avatar_url != $this->request->getParam("owner_avatar")) {
-        $dev->avatar_url = $this->request->getParam("owner_avatar");
-        save_developer($dev);
+      if ( $dev->getAvatarUrl() != $this->request->getParam("owner_avatar")) {
+        $dev->setAvatarUrl($this->request->getParam("owner_avatar"));
+        $dev->save();
       }
     }
 
-    if(!load_project_where("name = '".$proj['name']."' and owner_id = ".$dev->id)) {
+    if(!ProjectQuery::create()->filterByName($proj['name'])->findOneByOwnerId($dev->getId())) {
+      $projectUrl = $proj['url'];
+      $projectUrl = str_replace("https", "", $projectUrl);
+      $projectUrl = str_replace("http", "", $projectUrl);
+      $projectUrl = str_replace("://", "", $projectUrl);
+      $projectUrl = "http://" . $projectUrl;
 
-      $proj['url'] = str_replace("https", "", $proj['url']);
-      $proj['url'] = str_replace("http", "", $proj['url']);
-      $proj['url'] = str_replace("://", "", $proj['url']);
-      $proj['url'] = "http://" . $proj['url'];
-
-      $proj['owner_id'] = $dev->id;
-      $proj['published'] = 1;
-      $entity->load_from_array($proj);
-      if(save_project($entity)) {
+      $project->setUrl($projectUrl)->setDeveloper($dev)->setPublished(true);
+      if($project->save()) {
         //Create the first set of stats
-        $entity->saveInitStats();
-        $entity->grabHistoricData();
+        $project->saveInitStats();
+        $project->grabHistoricData();
         $this->flash->setSuccess("The project was added correctly, thanks!");
-        $this->redirect_to(project_show_path($entity));
+        $this->redirect_to(project_show_path($project));
       } else {
-        $this->render(array("entity" => $entity), "new");
+        $this->render(array("entity" => $project), "new");
       }
     } else {
       $this->flash->setError("This project has already been submited");
-      $this->render(array("entity" => $entity), "new");
+      $this->render(array("entity" => $project), "new");
     }
   }
 
